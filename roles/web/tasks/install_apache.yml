@@ -1,0 +1,13 @@
+- name: Install Webserver pkgs
+  vars_files:
+    ../vars/web_variables.yml
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ web_pkgs }}"
+  tags:
+    - new_web
+  notify:
+    - restart apache2
+    - FW add

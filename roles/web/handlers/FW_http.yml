@@ -1,0 +1,9 @@
+- name: FW add        #{ Web Firewall }
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  loop: "{{ web_service }}"             #{ vars : firewall_vars }
+  tags:
+    - new_web

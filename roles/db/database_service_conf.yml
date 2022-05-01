@@ -1,0 +1,27 @@
+---
+- name: service_conf
+  hosts: all
+  become: yes
+  vars_files:
+    - database_variables.yml
+  tasks:
+    - name: Install packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ db_pkgs }}"
+
+    - name: service start
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop: "{{ db_service }}"
+
+    - name: allow firewall
+      firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: yes
+        immediate: yes
+      loop: "{{ db_firewall }}"

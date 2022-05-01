@@ -1,0 +1,13 @@
+---
+- name: Install pymysql
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: apt update
+      command: sudo apt update
+
+    - name: install pip3
+      command: sudo apt install python3-pip
+
+    - name: pip install pymysql
+      command: sudo pip3 install pymysql

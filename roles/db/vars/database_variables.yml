@@ -1,0 +1,16 @@
+db_pkgs:
+  - mysql-server
+  - firewalld
+
+db_service:
+  - mysql
+
+db_firewall:
+  - mysql
+
+db_user:
+  { name: test, password: 'anwlro55', priv: 'wordpress1.*:ALL', host: '%' }
+
+db_database: 
+  { db_name: wordpress1, db_user: test, db_passwd: 'anwlro55', db_host: '192.168.56.21' } 
+

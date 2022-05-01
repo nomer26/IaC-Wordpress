@@ -1,0 +1,108 @@
+---
+#- name: Install pymysql
+#  import_playbook: database_pymysql.yml
+#  tags:
+#    - new_database
+#
+################################  [ DB Server ] #######################
+#- name: DB server play
+#  hosts: DB_server
+#  become: yes
+#  vars_files:
+#    - database_variables.yml
+#  tasks:
+#    - name: Install packages
+#      apt:
+#        name: "{{ item }}"
+#        state: present
+#      loop: "{{ db_pkgs }}"
+#      tags: 
+#        - new_database
+#        - db_pkg
+#
+#    - name: start mysql
+#      include_tasks: database_tasks.yml
+#      tags:
+#        - new_database
+#        - db_activate
+#
+#    - name: firewall mysql
+#      include_tasks: database_tasks.yml
+#        - new_database
+#        - db_activate
+#
+#    - name: Create user
+#      mysql_user:
+#        name: "{{ db_user.name }}"
+#        password: "{{ db_user.password }}"
+#        priv: '{{ db_user.priv }}'
+#        host: '{{ db_user.host }}'
+#        state: present
+#        login_unix_socket: /var/run/mysqld/mysqld.sock
+#      tags:
+#        - new_database
+#        - create_user
+#
+#    - name: Create DB
+#      mysql_db:
+#        name: "{{ db_database.db_name }}"
+#        state: present
+#        login_user: "{{ db_database.db_user }}"
+#        login_password: "{{ db_database.db_passwd }}"
+#      tags:
+#        - new_database
+#        - create_db 
+#
+#    - name: allow remote      
+#      replace:
+#        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+#        regexp: '127.0.0.1'
+#        replace: '0.0.0.0'
+#      tags:
+#        - new_database
+        
+
+###################################### [ Web Server ] ################################
+
+  #Apache / PHP 레포지토리 추가
+- name: repository_conf
+  import_playbook: files/web_repository_tasks.yml
+  tags:
+    - new_web
+ #패키지 설치 및 방화벽 구성
+- name: Install Webserver pkgs
+  vars_files:
+    ../vars/web_variables.yml
+  apt: 
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ web_pkgs }}"
+  tags:
+    - new_web
+
+- name: FW add        #{ Web Firewall }
+  vars:
+    ansible_python_interpreter: '/usr/bin/python3'
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  loop: "{{ web_service }}"             #{ vars : firewall_vars }
+  tags:
+    - new_web
+
+- name: Install php
+  apt:
+    name: "php7.4{{ item }}"
+    state: present
+  loop: "{{ php_items | flatten(1) }}"
+  tags:
+    - new_web
+
+ #워드프레스 환경구성
+- name: wordpress_conf
+  import_playbook: ../files/web_wordpress_conf_tasks.yml
+  tags:
+    - new_web

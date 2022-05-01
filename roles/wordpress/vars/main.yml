@@ -1,0 +1,15 @@
+---
+# vars file for wordpress
+web_pkgs:
+  - apache2
+  - firewalld
+
+web_service:
+  - http
+  - mysql
+
+php_items:
+  - ['','-curl','-gd','-mbstring','-mysql','-soap','-json','-intl','-zip','-xml','-xmlrpc','-cli','-xsl']
+
+db_database:
+  { db_name: wordpress1, db_user: test, db_passwd: 'anwlro55', db_host: '192.168.56.11' }

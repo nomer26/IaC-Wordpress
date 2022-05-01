@@ -1,0 +1,17 @@
+---
+# handlers file for wordpress
+- name: FW_http
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  loop: "{{ web_service }}"             #{ vars : firewall_vars }
+  tags:
+    - new_web
+
+- name: restart apache2
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes

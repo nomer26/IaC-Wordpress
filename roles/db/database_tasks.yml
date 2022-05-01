@@ -1,0 +1,16 @@
+- name: start mysql
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    "{{ db_service }}"
+
+- name: firewall mysql
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: yes
+    immediate: yes
+  loop:
+    "{{ db_firewall }}"

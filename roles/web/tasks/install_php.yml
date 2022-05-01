@@ -1,0 +1,10 @@
+---
+- name: Install php
+  vars_files:
+    ../vars/web_variables.yml
+  apt:
+    name: "php7.4{{ item }}"
+    state: present
+  loop: "{{ php_items | flatten(1) }}"
+  tags:
+    - new_web

@@ -1,0 +1,25 @@
+---
+- name:  wget wordpress
+  command: wget https://wordpress.org/latest.tar.gz
+
+- name: unzip wordpress
+  command: tar -zxvf latest.tar.gz -C /var/www/html/
+
+- name: modify owner:group
+  command: chown www-data:www-data /var/www/html/ -R
+
+- name: modify document path
+  replace:
+    path: /etc/apache2/sites-available/000-default.conf
+    regexp: '/var/www/html(.*)$'
+    replace: '/var/www/html/wordpress'
+
+- name: wordpress index template
+  vars_files: database_variables.yml
+  template:
+    src: /home/vagrant/ansible_test/wp-config.j2
+    dest: /var/www/html/wordpress/wp-config.php
+    owner: www-data
+    group: www-data
+  notify:
+    - restart apache2
